@@ -8,11 +8,13 @@ import (
 	parser "yourtechy.com/go-sweat/link_parser/parser/html"
 )
 
+// Link - The link container the link URL and string content
 type Link struct {
 	Url  string
 	Text string
 }
 
+// GetLinks - Get all hyperlinks from a given html file
 func GetLinks(source string) (*[]*Link, error) {
 
 	parser, err := parser.NewHtmlParser(source)
@@ -36,6 +38,12 @@ func GetLinks(source string) (*[]*Link, error) {
 	return &links, nil
 }
 
+// buildLinks - Iterate through each node, children, and siblings,
+//              check if href is found, extract and store in an
+//              array of links.
+//
+// @params: node - The current node
+//          links - Returns all found links.
 func buildLinks(node *parser.HtmlNode, links *[]*Link) {
 
 	if node.GetNodeName() == "a" {
