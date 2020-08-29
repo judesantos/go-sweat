@@ -4,8 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/judesantos/go-bookstore_utils/logger"
 	parser "yourtechy.com/go-sweat/link_parser/parser/html"
+	"yourtechy.com/go-sweat/utils/logger"
+)
+
+var (
+	log = logger.NewLogger()
 )
 
 // Link - The link container the link URL and string content
@@ -20,7 +24,7 @@ func GetLinks(source string) (*[]*Link, error) {
 	parser, err := parser.NewHtmlParser(source)
 
 	if err != nil {
-		logger.Error("Get parser failed!", err)
+		log.Error("Get parser failed!", err)
 		return nil, err
 	}
 

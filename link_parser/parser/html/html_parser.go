@@ -5,8 +5,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/judesantos/go-bookstore_utils/logger"
 	"golang.org/x/net/html"
+	"yourtechy.com/go-sweat/utils/logger"
+)
+
+var (
+	log = logger.NewLogger()
 )
 
 /************************************************************************
@@ -62,13 +66,13 @@ func NewHtmlParser(source string) (*HtmlNode, error) {
 
 	f, err := os.Open(source)
 	if err != nil {
-		logger.Error(fmt.Sprintf("open %s failed!", source), err)
+		log.Error(fmt.Sprintf("open %s failed!", source), err)
 		return nil, err
 	}
 
 	node, err := html.Parse(f)
 	if err != nil {
-		logger.Debug(err.Error())
+		log.Debug(err.Error())
 		return nil, err
 	}
 

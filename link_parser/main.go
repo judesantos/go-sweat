@@ -3,8 +3,12 @@ package main
 import (
 	"fmt"
 
-	"github.com/judesantos/go-bookstore_utils/logger"
 	"yourtechy.com/go-sweat/link_parser/links"
+	"yourtechy.com/go-sweat/utils/logger"
+)
+
+var (
+	log = logger.NewLogger()
 )
 
 func main() {
@@ -32,7 +36,7 @@ func GetLinks(source string) {
 	_links, err = links.GetLinks(source)
 
 	if err != nil {
-		logger.Error("GetLinks failed:", err)
+		log.Error("GetLinks failed:", err)
 	}
 
 	for i, link := range *_links {
