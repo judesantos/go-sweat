@@ -17,11 +17,10 @@ func main() {
 
 	// run progress counter in background
 	go func() {
-		fmt.Println()
+		fmt.Printf("\nGet site map for %s...\n\n", url)
 		for {
 			// print out
-			fmt.Printf("\rGet links for %s. Found links[\033[36m%d\033[m] ",
-				url, len(*c.ToArray()))
+			fmt.Printf("\r Found links[\033[36m%d\033[m] ", len(*c.ToArray()))
 			time.Sleep(100 * time.Millisecond)
 			// check if done
 			if isDone {
@@ -43,7 +42,7 @@ func main() {
 	// print output
 
 	fmt.Printf("\n\n")
-	fmt.Printf("Get links success!\n")
+	fmt.Printf("Get site map success!\n")
 	fmt.Println(c.ToXml())
 
 }

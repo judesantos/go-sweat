@@ -103,39 +103,10 @@ func (c *crawler) ToXml() (string, error) {
 //            links. Exclude external links
 func getLinks(c *crawler, siteUrl string) error {
 
-	var _links *[]*links.Link
+	_links, err := getSubLinks(c, siteUrl)
 
-	{
-		// fetch
-		res, err := http.Get(siteUrl)
-
-		if err != nil {
-			return err
-		}
-
-		defer res.Body.Close()
-
-		// mark found link as processed
-
-		if c.baseUrl == "" {
-			// Save actual base URL
-			reqUrl := res.Request.URL
-			baseUrl := &url.URL{
-				Scheme: reqUrl.Scheme,
-				Host:   reqUrl.Host,
-			}
-			c.baseUrl = baseUrl.String()
-			c.processed[c.baseUrl] = struct{}{}
-		} else {
-			c.processed[siteUrl] = struct{}{}
-		}
-
-		r := io.Reader(res.Body)
-		_links, err = links.GetLinks(&r)
-
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
 	}
 
 	// process each page and get more links
@@ -164,4 +135,50 @@ func getLinks(c *crawler, siteUrl string) error {
 	} // end for
 
 	return nil
+}
+
+// getSublinks - Get links of a given site page/resource.
+//
+// Terminates http object instance after each call -
+// since getSublinks will be used in a loop, we do not want to store too many
+// response objects in memory. Atomizing calls to http.Get() allows
+// us to extract returned values then terminate the provider instance after
+// each request.
+func getSubLinks(c *crawler, linkUrl string) (*[]*links.Link, error) {
+
+	var _links *[]*links.Link
+
+	// fetch
+	res, err := http.Get(linkUrl)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// release provider on exit
+	defer res.Body.Close()
+
+	// mark found link as processed
+
+	if c.baseUrl == "" {
+		// Save actual base URL
+		reqUrl := res.Request.URL
+		baseUrl := &url.URL{
+			Scheme: reqUrl.Scheme,
+			Host:   reqUrl.Host,
+		}
+		c.baseUrl = baseUrl.String()
+		c.processed[c.baseUrl] = struct{}{}
+	} else {
+		c.processed[linkUrl] = struct{}{}
+	}
+
+	r := io.Reader(res.Body)
+	_links, err = links.GetLinks(&r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return _links, nil
 }
