@@ -3,42 +3,54 @@ package tests
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"yourtechy.com/go-sweat/link_parser/links"
 )
 
 func TestGetHelloLinks(t *testing.T) {
 
-	_links, err := links.GetLinks("./data/hello.html")
+	r := getReader("./data/hello.html")
+	require.True(t, nil != r, "getReader failed")
 
-	assert.True(t, err == nil, "Get hello links returned error")
-	assert.True(t, _links != nil, "Get hello links failed")
-	assert.True(t, 1 == len(*_links), "Returned links count must be 1 item")
+	_links, err := links.GetLinks(&r)
+
+	require.True(t, err == nil, "Get hello links returned error")
+	require.True(t, _links != nil, "Get hello links failed")
+	require.True(t, 1 == len(*_links), "Returned links count must be 1 item")
 }
 
 func TestGetAdjacentLinks(t *testing.T) {
 
-	_links, err := links.GetLinks("./data/adjacent-links.html")
+	r := getReader("./data/adjacent-links.html")
+	require.True(t, nil != r, "getReader failed")
 
-	assert.True(t, err == nil, "Get adjacent links returned error")
-	assert.True(t, _links != nil, "Get adjacent links failed")
-	assert.True(t, 2 == len(*_links), "Returned links count must be 2 items")
+	_links, err := links.GetLinks(&r)
+
+	require.True(t, err == nil, "Get adjacent links returned error")
+	require.True(t, _links != nil, "Get adjacent links failed")
+	require.True(t, 2 == len(*_links), "Returned links count must be 2 items")
 }
 
 func TestGetSectionedLinks(t *testing.T) {
 
-	_links, err := links.GetLinks("./data/sectioned-links.html")
+	r := getReader("./data/sectioned-links.html")
+	require.True(t, nil != r, "getReader failed")
 
-	assert.True(t, err == nil, "Get sectioned links returned error")
-	assert.True(t, _links != nil, "Get sectioned links failed")
-	assert.True(t, 3 == len(*_links), "Returned links count must be 3 items")
+	_links, err := links.GetLinks(&r)
+
+	require.True(t, err == nil, "Get sectioned links returned error")
+	require.True(t, _links != nil, "Get sectioned links failed")
+	require.True(t, 3 == len(*_links), "Returned links count must be 3 items")
 }
 
 func TestGetNestedLinks(t *testing.T) {
 
-	_links, err := links.GetLinks("./data/nested-links.html")
+	r := getReader("./data/nested-links.html")
+	require.True(t, nil != r, "getReader failed")
 
-	assert.True(t, err == nil, "Get nested links returned error")
-	assert.True(t, _links != nil, "Get nested links failed")
-	assert.True(t, 2 == len(*_links), "Returned links count must be 2 items")
+	_links, err := links.GetLinks(&r)
+
+	require.True(t, err == nil, "Get nested links returned error")
+	require.True(t, _links != nil, "Get nested links failed")
+	require.True(t, 2 == len(*_links), "Returned links count must be 2 items")
 }

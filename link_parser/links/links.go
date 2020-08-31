@@ -3,6 +3,8 @@ package links
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
 
 	parser "yourtechy.com/go-sweat/link_parser/parser/html"
 	"yourtechy.com/go-sweat/utils/logger"
@@ -19,9 +21,9 @@ type Link struct {
 }
 
 // GetLinks - Get all hyperlinks from a given html file
-func GetLinks(source string) (*[]*Link, error) {
+func GetLinks(r *io.Reader) (*[]*Link, error) {
 
-	parser, err := parser.NewHtmlParser(source)
+	parser, err := parser.NewHtmlParser(r)
 
 	if err != nil {
 		log.Error("Get parser failed!", err)
@@ -42,6 +44,18 @@ func GetLinks(source string) (*[]*Link, error) {
 	return &links, nil
 }
 
+func getFileReader(source *string) io.Reader {
+
+	r, err := os.Open(*source)
+
+	if err != nil {
+		log.Error(fmt.Sprintf("open %s failed!", source), err)
+		return nil
+	}
+
+	return io.Reader(r)
+}
+
 // buildLinks - Iterate through each node, children, and siblings,
 //              check if href is found, extract and store in an
 //              array of links.
@@ -55,10 +69,13 @@ func buildLinks(node *parser.HtmlNode, links *[]*Link) {
 		attrib := node.GetAttribute("href")
 		text := node.GetText(0)
 
-		*links = append(*links, &Link{
-			Url:  attrib.Value,
-			Text: text,
-		})
+		if attrib != nil {
+
+			*links = append(*links, &Link{
+				Url:  attrib.Value,
+				Text: text,
+			})
+		}
 
 	}
 

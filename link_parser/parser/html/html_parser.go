@@ -1,8 +1,7 @@
 package parser
 
 import (
-	"fmt"
-	"os"
+	"io"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -35,6 +34,19 @@ type INode interface {
 	NextChild() *INode
 }
 
+// NewHtmlParser - Create new Html parser
+// @return the HTMLNode instance
+func NewHtmlParser(r *io.Reader) (*HtmlNode, error) {
+
+	node, err := parse(r)
+	if err != nil {
+		log.Debug(err.Error())
+		return nil, err
+	}
+
+	return node, nil
+}
+
 // GetAtribute - Get this node attribute
 func (node *HtmlNode) GetAttribute(key string) *HtmlAttribute {
 	if node != nil {
@@ -58,27 +70,6 @@ func (node *HtmlNode) GetNodeName() string {
 	}
 
 	return ""
-}
-
-// NewHtmlParser - Create new Html parser
-// @return the HTMLNode instance
-func NewHtmlParser(source string) (*HtmlNode, error) {
-
-	f, err := os.Open(source)
-	if err != nil {
-		log.Error(fmt.Sprintf("open %s failed!", source), err)
-		return nil, err
-	}
-
-	node, err := html.Parse(f)
-	if err != nil {
-		log.Debug(err.Error())
-		return nil, err
-	}
-
-	return &HtmlNode{
-		iNode: node,
-	}, nil
 }
 
 func (node *HtmlNode) GetType() uint32 {
@@ -227,4 +218,17 @@ func searchNode(n *html.Node, target string) *html.Node {
 	}
 
 	return ch
+}
+
+func parse(r *io.Reader) (*HtmlNode, error) {
+
+	node, err := html.Parse(*r)
+	if err != nil {
+		log.Debug(err.Error())
+		return nil, err
+	}
+
+	return &HtmlNode{
+		iNode: node,
+	}, nil
 }
